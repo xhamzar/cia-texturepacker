@@ -1,84 +1,62 @@
 # Cia TexturePacker
 
-Aplikasi Android untuk menggabungkan banyak gambar sprite menjadi satu **sprite sheet / texture atlas**, lengkap dengan pixel editor built-in. Dibuat untuk kebutuhan game development — packing sprite jadi cepat dan rapi.
+![Build](https://github.com/xhamzar/cia-texturepacker/actions/workflows/build.yml/badge.svg)
+
+Aplikasi Android untuk menggabungkan banyak gambar sprite menjadi satu **sprite sheet / texture atlas**, lengkap dengan pixel editor built-in. Dibuat untuk kebutuhan game development.
+
+## Screenshots
+
+| Images | Atlas | Settings |
+|:---:|:---:|:---:|
+| <img src="docs/screenshots/02-images-tab.jpg" width="250"> | <img src="docs/screenshots/03-atlas-tab.jpg" width="250"> | <img src="docs/screenshots/04-settings-tab.jpg" width="250"> |
+
+| Pixel Editor | Menu |
+|:---:|:---:|
+| <img src="docs/screenshots/05-pixel-editor.jpg" width="250"> | <img src="docs/screenshots/01-drawer-menu.jpg" width="250"> |
 
 ## Fitur
 
-### 📥 Impor Gambar
-- Impor banyak gambar sekaligus dari file picker
-- Preview thumbnail per sprite dengan ukuran aslinya
+- **Impor Gambar** — impor banyak gambar sekaligus dari file picker
+- **Auto-Pisah Sprite** — pisahkan gambar multi-sprite otomatis (connected-components pada alpha channel)
+- **Auto-Transparan** — deteksi warna background dari empat sudut, jadikan transparan
+- **Packing** — mode Otomatis (Shelf) dan Grid (sel 32/64/128/256)
+- **Trim Transparent** — potong area kosong di sekitar sprite
+- **Pixel Editor** — edit per-pixel (kuas, penghapus, undo 20x, zoom 1–64x)
+- **Export** — PNG + data JSON (Phaser/PixiJS), XML, plist (Cocos2d), TXT
+- **Text Editor** — lihat & edit data atlas langsung dengan syntax highlighting
+- **Multi-select** — pilih banyak sprite untuk hapus sekaligus
 
-![Images Tab](docs/screenshots/02-images-tab.jpg)
+## Download
 
-### ✂️ Auto-Pisah Sprite
-Otomatis memisahkan gambar yang berisi beberapa sprite (connected-components pada alpha channel). Contoh: `Tower1.png` → `Tower1_0.png`, `Tower1_1.png`.
-
-### 🪄 Auto-Transparan
-Mendeteksi warna background dari empat sudut gambar dan membuatnya transparan (tolerance default 32).
-
-### 🗺️ Atlas / Sprite Sheet
-- Mode packing **Otomatis (Shelf)** dan **Grid** (ukuran sel 32/64/128/256)
-- Preview checkerboard + garis grid
-- Mode tampilan: Preview / Texture / Grid
-- Animasi preview frame-by-frame
-
-![Atlas Tab](docs/screenshots/03-atlas-tab.jpg)
-
-### ⚙️ Pengaturan Packing
-- Ukuran atlas (width × height)
-- Padding & spacing antar sprite
-- Trim transparent (potong area kosong)
-- Format output: PNG
-
-![Settings Tab](docs/screenshots/04-settings-tab.jpg)
-
-### 🎨 Pixel Editor
-Long-press thumbnail untuk edit pixel per sprite:
-- Tool: Penghapus, Kuas, Gerak (pan)
-- Ukuran brush 1/3/5/9 px, 9 warna
-- Undo (20 langkah), zoom 1–64x
-- Grid overlay + checkerboard background
-
-![Pixel Editor](docs/screenshots/05-pixel-editor.jpg)
-
-### 📤 Export
-- PNG sprite sheet
-- Data format: **JSON** (Phaser/PixiJS), **XML**, **plist** (Cocos2d), **TXT**
-- Lihat & edit data langsung di aplikasi (Text Editor dengan syntax highlighting)
-
-### 🗂️ Menu
-Akses cepat: Impor Gambar, Atlas, Settings, Export, Text Editor, Hapus Semua, Tentang.
-
-![Drawer Menu](docs/screenshots/01-drawer-menu.jpg)
-
-## Download APK
-
-APK terbaru tersedia via Google Drive (link dibagikan terpisah).
+APK terbaru tersedia di halaman [Releases](https://github.com/xhamzar/cia-texturepacker/releases). Setiap push tag `v*` otomatis membangun dan merilis APK baru via GitHub Actions.
 
 ## Build
 
+**Kebutuhan:**
+- Android Studio (terbaru) atau JDK 17 + Gradle 8.9
+- Android SDK (compileSdk 35)
+
+**Cara build:**
 ```bash
-export JAVA_HOME=/home/hatch/java/jdk-17
-export GRADLE_USER_HOME=/home/hatch/.gradle
-export JAVA_TOOL_OPTIONS="-Djava.net.preferIPv4Stack=true"
-~/gradle-dist/gradle-8.9/bin/gradle :app:assembleDebug --offline
+# Via Android Studio: buka project lalu Run > Run 'app'
+# Via command line:
+./gradlew :app:assembleDebug
 ```
 
-- compileSdk 35, targetSdk 34, minSdk 26
-- APK: `app/build/outputs/apk/debug/app-debug.apk`
+APK hasil build: `app/build/outputs/apk/debug/app-debug.apk`
 
 ## Struktur Project
 
 ```
 app/src/main/java/com/cia/texturepacker/
 ├── MainActivity.kt          # Activity utama + drawer
-├── ImagesFragment.kt        # Tab Images (grid sprite)
-├── AtlasFragment.kt         # Tab Atlas (preview sprite sheet)
+├── ImagesFragment.kt        # Tab Images
+├── AtlasFragment.kt         # Tab Atlas
 ├── SettingsFragment.kt      # Tab Settings
 ├── PixelEditorActivity.kt   # Pixel editor
-├── PixelCanvasView.kt       # Custom view canvas pixel
-├── PackViewModel.kt         # State + logic packing
-├── SpritePacker.kt          # Algoritma packing (shelf & grid)
+├── PixelCanvasView.kt       # Custom view canvas
+├── PackViewModel.kt         # State & logic packing
+├── SpritePacker.kt          # Algoritma packing
 ├── BackgroundRemover.kt     # Auto-transparan
 ├── SpriteSplitter.kt        # Auto-pisah sprite
 ├── DataEditorActivity.kt    # Text editor data atlas
