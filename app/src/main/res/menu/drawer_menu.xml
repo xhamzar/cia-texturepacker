@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/nav_import" android:title="@string/menu_import" android:icon="@drawable/ic_image" />
+    <item android:id="@+id/nav_atlas" android:title="@string/tab_atlas" android:icon="@drawable/ic_image" />
+    <item android:id="@+id/nav_settings" android:title="@string/tab_settings" android:icon="@drawable/ic_edit" />
+    <item android:id="@+id/nav_export" android:title="@string/menu_export" android:icon="@drawable/ic_save" />
+    <item android:id="@+id/nav_editor" android:title="@string/menu_text_editor" android:icon="@drawable/ic_copy" />
+    <item android:id="@+id/nav_clear" android:title="@string/menu_clear" android:icon="@drawable/ic_close" />
+    <item android:id="@+id/nav_about" android:title="@string/menu_about" android:icon="@drawable/ic_info" />
+</menu>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Light theme for main screens (per mockup) -->
+    <style name="Theme.CiaTexturePacker" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/blue</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorPrimaryContainer">@color/blue_light</item>
+        <item name="android:colorBackground">@color/light_bg</item>
+        <item name="colorSurface">@color/light_card</item>
+        <item name="colorOnSurface">@color/light_text_primary</item>
+        <item name="colorSurfaceVariant">@color/light_bg</item>
+        <item name="colorOnSurfaceVariant">@color/light_text_secondary</item>
+    </style>
+
+    <!-- Dark theme for the code editor -->
+    <style name="Theme.CiaTexturePacker.Code" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/blue</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="android:colorBackground">@color/code_bg</item>
+        <item name="colorSurface">#252526</item>
+        <item name="colorOnSurface">@color/code_text</item>
+    </style>
+
+    <style name="CiaButton" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/accent</item>
+        <item name="android:textColor">#1A1A1E</item>
+        <item name="cornerRadius">10dp</item>
+    </style>
+
+    <style name="CiaButton.Outline" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="strokeColor">@color/accent</item>
+        <item name="android:textColor">@color/accent</item>
+        <item name="cornerRadius">10dp</item>
+    </style>
+
+    <!-- Light-theme buttons (mockup style) -->
+    <style name="TpButton" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/blue</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="cornerRadius">10dp</item>
+    </style>
+
+    <style name="TpButton.Outline" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="strokeColor">@color/blue</item>
+        <item name="android:textColor">@color/blue</item>
+        <item name="cornerRadius">10dp</item>
+    </style>
+
+    <style name="TpButton.Danger" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/danger</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="cornerRadius">10dp</item>
+    </style>
+</resources>

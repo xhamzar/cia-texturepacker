@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark palette (legacy + code editor) -->
+    <color name="bg">#2E2E32</color>
+    <color name="surface">#3A3A3F</color>
+    <color name="surface2">#44444B</color>
+    <color name="accent">#7B9BD4</color>
+    <color name="accent_dark">#5A7BB8</color>
+    <color name="text_primary">#F2F2F5</color>
+    <color name="text_secondary">#B9B9C2</color>
+    <color name="danger">#E57373</color>
+    <color name="success">#81C784</color>
+
+    <!-- Light palette (main UI, per mockup) -->
+    <color name="light_bg">#F5F6F8</color>
+    <color name="light_card">#FFFFFF</color>
+    <color name="light_text_primary">#1A1A1E</color>
+    <color name="light_text_secondary">#6B6B76</color>
+    <color name="light_divider">#E4E5EA</color>
+    <color name="blue">#2196F3</color>
+    <color name="blue_dark">#1976D2</color>
+    <color name="blue_light">#E3F2FD</color>
+
+    <!-- Code editor (dark) -->
+    <color name="code_bg">#1E1E1E</color>
+    <color name="code_text">#D4D4D4</color>
+    <color name="code_key">#CE9178</color>
+    <color name="code_string">#9CDCFE</color>
+    <color name="code_number">#B5CEA8</color>
+    <color name="code_bool">#569CD6</color>
+    <color name="code_comment">#6A9955</color>
+    <color name="code_tag">#569CD6</color>
+    <color name="code_attr">#9CDCFE</color>
+
+    <!-- Checkerboard -->
+    <color name="checker_light">#FFFFFF</color>
+    <color name="checker_dark">#E0E0E0</color>
+</resources>
