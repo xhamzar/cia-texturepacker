@@ -2,5 +2,7 @@
 build/
 app/build/
 local.properties
-*.keystore
 .cxx/
+# Allow debug.keystore (debug key only, safe for CI)
+!debug.keystore
+*.jks
