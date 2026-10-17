@@ -36,6 +36,8 @@ class ImagesFragment : Fragment() {
     private lateinit var btnDeleteSelected: Button
     private lateinit var rowActions1: LinearLayout
     private lateinit var rowActions2: LinearLayout
+    private lateinit var rowActionsImport: LinearLayout
+    private lateinit var btnImportAtlas: Button
 
     private var selectionMode = false
     private var suppressSelectionClear = false
@@ -58,6 +60,51 @@ class ImagesFragment : Fragment() {
         }
     }
 
+    /** Long-press menu: rename or open the pixel editor. */
+    private fun showItemMenu(pos: Int) {
+        val item = vm.sprites.value?.getOrNull(pos) ?: return
+        AlertDialog.Builder(requireContext())
+            .setTitle(item.name)
+            .setItems(
+                arrayOf(
+                    getString(R.string.action_rename),
+                    getString(R.string.action_edit_pixel)
+                )
+            ) { _, which ->
+                when (which) {
+                    0 -> showRenameDialog(pos, item.name)
+                    1 -> openPixelEditor(pos)
+                }
+            }
+            .show()
+    }
+
+    private fun showRenameDialog(pos: Int, oldName: String) {
+        val et = android.widget.EditText(requireContext()).apply {
+            setText(oldName)
+            selectAll()
+            inputType = android.text.InputType.TYPE_CLASS_TEXT
+            setSingleLine()
+        }
+        val pad = (16 * resources.displayMetrics.density).toInt()
+        val container = android.widget.FrameLayout(requireContext()).apply {
+            setPadding(pad, pad / 2, pad, 0)
+            addView(et)
+        }
+        AlertDialog.Builder(requireContext())
+            .setTitle(R.string.rename_title)
+            .setView(container)
+            .setNegativeButton(R.string.cancel, null)
+            .setPositiveButton(R.string.ok) { _, _ -> vm.rename(pos, et.text.toString()) }
+            .show()
+        et.post {
+            et.requestFocus()
+            val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE)
+                as android.view.inputmethod.InputMethodManager
+            imm.showSoftInput(et, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
+        }
+    }
+
     private fun openPixelEditor(pos: Int) {
         if (pos == RecyclerView.NO_POSITION || selectionMode) return
         val item = vm.sprites.value?.getOrNull(pos) ?: return
@@ -74,6 +121,28 @@ class ImagesFragment : Fragment() {
     private val backCallback = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() {
             exitSelectionMode()
+        }
+    }
+
+    /** Import Atlas: pick the atlas image first, then its data file. */
+    private var pendingAtlasImage: android.net.Uri? = null
+
+    private val pickAtlasImageLauncher = registerForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri ->
+        if (uri != null) {
+            pendingAtlasImage = uri
+            pickAtlasDataLauncher.launch("*/*")
+        }
+    }
+
+    private val pickAtlasDataLauncher = registerForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri ->
+        val img = pendingAtlasImage
+        pendingAtlasImage = null
+        if (img != null && uri != null) {
+            vm.importAtlas(img, uri)
         }
     }
 
@@ -98,7 +167,7 @@ class ImagesFragment : Fragment() {
                 }
             },
             onLongPress = { pos ->
-                openPixelEditor(pos)
+                if (pos != RecyclerView.NO_POSITION && !selectionMode) showItemMenu(pos)
             }
         )
         val rv = view.findViewById<RecyclerView>(R.id.rvGrid)
@@ -115,6 +184,9 @@ class ImagesFragment : Fragment() {
         btnDeleteSelected = view.findViewById(R.id.btnDeleteSelected)
         rowActions1 = view.findViewById(R.id.rowActions1)
         rowActions2 = view.findViewById(R.id.rowActions2)
+        rowActionsImport = view.findViewById(R.id.rowActionsImport)
+        btnImportAtlas = view.findViewById(R.id.btnImportAtlas)
+        btnImportAtlas.setOnClickListener { pickAtlasImageLauncher.launch("image/*") }
 
         view.findViewById<Button>(R.id.btnAdd).setOnClickListener { onAddImages?.invoke() }
         btnSplit = view.findViewById(R.id.btnSplit)
@@ -181,6 +253,7 @@ class ImagesFragment : Fragment() {
         selectionActions.visibility = if (selectionMode) View.VISIBLE else View.GONE
         rowActions1.visibility = if (selectionMode) View.GONE else View.VISIBLE
         rowActions2.visibility = if (selectionMode) View.GONE else View.VISIBLE
+        rowActionsImport.visibility = if (selectionMode) View.GONE else View.VISIBLE
         backCallback.isEnabled = selectionMode
     }
 

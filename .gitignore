@@ -6,3 +6,4 @@ local.properties
 # Allow debug.keystore (debug key only, safe for CI)
 !debug.keystore
 *.jks
+*.apk

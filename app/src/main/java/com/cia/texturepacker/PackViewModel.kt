@@ -5,6 +5,7 @@ import android.content.Intent
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.net.Uri
 import android.provider.OpenableColumns
 import androidx.lifecycle.AndroidViewModel
@@ -85,6 +86,118 @@ class PackViewModel(app: Application) : AndroidViewModel(app) {
                 }
             }
         }
+    }
+
+    /**
+     * Import Atlas: load an atlas image + its data file (plist/json/xml/txt).
+     * Sprites are cropped exactly per the data file's rects and keep the
+     * data file's names — accurate, matching the game code (no guessing).
+     */
+    fun importAtlas(imageUri: Uri, dataUri: Uri) {
+        val app = getApplication<Application>()
+        _status.value = app.getString(R.string.importing_atlas)
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val cr = app.contentResolver
+                try {
+                    cr.takePersistableUriPermission(imageUri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                } catch (_: SecurityException) { }
+                try {
+                    cr.takePersistableUriPermission(dataUri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                } catch (_: SecurityException) { }
+                val atlas = cr.openInputStream(imageUri)?.use { BitmapFactory.decodeStream(it) }
+                    ?: throw IllegalArgumentException(app.getString(R.string.import_bad_image))
+                val dataName = displayName(cr, dataUri)
+                val text = cr.openInputStream(dataUri)?.use { it.readBytes().toString(Charsets.UTF_8) }
+                    ?: throw IllegalArgumentException(app.getString(R.string.import_bad_data))
+                // Guard: plist knows its atlas pixel size — the image must match,
+                // otherwise every sprite comes out cut/misplaced (wrong pair).
+                if (dataName.lowercase().endsWith(".plist")) {
+                    AtlasImporter.parsePlistSize(text)?.let { (ew, eh) ->
+                        if (ew != atlas.width || eh != atlas.height) {
+                            throw IllegalArgumentException(
+                                app.getString(R.string.import_size_mismatch, ew, eh, atlas.width, atlas.height)
+                            )
+                        }
+                    }
+                }
+                val frames = AtlasImporter.parse(text, dataName)
+                if (frames.isEmpty()) throw IllegalArgumentException(app.getString(R.string.import_no_frames))
+                val loaded = mutableListOf<SpriteItem>()
+                var skipped = 0
+                for (f in frames) {
+                    try {
+                        val bmp = cropFrame(atlas, f)
+                        loaded.add(SpriteItem(f.name, bmp, makeThumb(bmp), bmp.width, bmp.height))
+                    } catch (_: Exception) { skipped++ }
+                }
+                withContext(Dispatchers.Main) {
+                    if (loaded.isEmpty()) {
+                        _status.value = app.getString(R.string.import_no_frames)
+                    } else {
+                        _sprites.value = (_sprites.value ?: emptyList()) + loaded
+                        _packResult.value = null // invalidate previous pack
+                        _status.value = app.getString(R.string.import_done, loaded.size, dataName) +
+                            if (skipped > 0) app.getString(R.string.import_skipped, skipped) else ""
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    _status.value = app.getString(R.string.import_failed, e.message ?: "?")
+                }
+            }
+        }
+    }
+
+    /**
+     * Crop one frame from the atlas.
+     *
+     * Rotated sprites are stored turned 90° CW in the atlas while the rect
+     * carries logical dims (CodeAndWeb convention): crop the swapped rect,
+     * then turn it back. If the rect already carries stored (swapped) dims,
+     * crop it verbatim instead.
+     */
+    private fun cropFrame(atlas: Bitmap, f: ImportedFrame): Bitmap {
+        val (cw, ch) = if (f.rotated) {
+            val alreadySwapped = f.w == f.trimH && f.h == f.trimW && f.w != f.h
+            if (alreadySwapped) f.w to f.h else f.h to f.w
+        } else {
+            f.w to f.h
+        }
+        val x = f.x.coerceIn(0, atlas.width - 1)
+        val y = f.y.coerceIn(0, atlas.height - 1)
+        val w = cw.coerceIn(1, atlas.width - x)
+        val h = ch.coerceIn(1, atlas.height - y)
+        val bmp = Bitmap.createBitmap(atlas, x, y, w, h)
+        if (!f.rotated) return bmp
+        // Undo the 90° CW pack rotation.
+        val m = Matrix().apply { postRotate(-90f) }
+        return Bitmap.createBitmap(bmp, 0, 0, bmp.width, bmp.height, m, true)
+    }
+
+    private fun makeThumb(bmp: Bitmap): Bitmap {
+        val tw = 160
+        val th = (tw * bmp.height / bmp.width.toFloat()).toInt().coerceAtLeast(1)
+        return Bitmap.createScaledBitmap(bmp, tw, th, true)
+    }
+
+    /** Rename a sprite. Duplicate names get an automatic " (2)" suffix. */
+    fun rename(pos: Int, newName: String) {
+        val cur = _sprites.value?.toMutableList() ?: return
+        if (pos !in cur.indices) return
+        val clean = newName.trim().replace(Regex("[/\\\\]"), "_")
+        if (clean.isEmpty() || clean == cur[pos].name) return
+        val taken = cur.mapIndexedNotNull { i, s -> if (i != pos) s.name else null }.toSet()
+        var final = clean
+        var i = 2
+        while (final in taken) {
+            final = "$clean ($i)"
+            i++
+        }
+        cur[pos] = cur[pos].copy(name = final)
+        _sprites.value = cur
+        _packResult.value = null // invalidate previous pack
+        _status.value = getApplication<Application>().getString(R.string.renamed, final)
     }
 
     fun removeAt(pos: Int) {

@@ -228,6 +228,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return when (format.uppercase()) {
             "XML" -> Triple(SpritePacker.toXml(result, imageName), "xml", "application/xml")
             "PLIST" -> Triple(SpritePacker.toPlist(result, imageName), "plist", "application/x-plist")
+            "PLIST3" -> Triple(SpritePacker.toPlistV3(result, imageName), "plist", "application/x-plist")
             "TXT" -> Triple(SpritePacker.toTxt(result, imageName), "txt", "text/plain")
             else -> Triple(SpritePacker.toJson(result, imageName), "json", "application/json")
         }
@@ -248,6 +249,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             "JSON" to buildData(result, imageName, "JSON"),
             "XML" to buildData(result, imageName, "XML"),
             "plist" to buildData(result, imageName, "plist"),
+            "PLIST3" to buildData(result, imageName, "PLIST3"),
             "TXT" to buildData(result, imageName, "TXT")
         )
         if (DataHolder.format.isEmpty()) DataHolder.format = "JSON"

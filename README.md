@@ -17,12 +17,14 @@ Aplikasi Android untuk menggabungkan banyak gambar sprite menjadi satu **sprite 
 ## Fitur
 
 - **Impor Gambar** — impor banyak gambar sekaligus dari file picker
+- **Import Atlas** — impor atlas yang sudah jadi: pilih gambar atlas + file datanya (plist v2/v3, JSON, XML, TXT); sprite terpotong persis sesuai rect di file dan namanya mengikuti kode game
 - **Auto-Pisah Sprite** — pisahkan gambar multi-sprite otomatis (connected-components pada alpha channel)
 - **Auto-Transparan** — deteksi warna background dari empat sudut, jadikan transparan
+- **Ganti Nama** — tahan (long-press) kartu sprite untuk mengganti nama (duplikat otomatis diberi suffix)
 - **Packing** — mode Otomatis (Shelf) dan Grid (sel 32/64/128/256)
 - **Trim Transparent** — potong area kosong di sekitar sprite
 - **Pixel Editor** — edit per-pixel (kuas, penghapus, undo 20x, zoom 1–64x)
-- **Export** — PNG + data JSON (Phaser/PixiJS), XML, plist (Cocos2d), TXT
+- **Export** — PNG + data JSON (Phaser/PixiJS), XML, plist v2 & **v3** (Cocos2d), TXT
 - **Text Editor** — lihat & edit data atlas langsung dengan syntax highlighting
 - **Multi-select** — pilih banyak sprite untuk hapus sekaligus
 
@@ -56,7 +58,8 @@ app/src/main/java/com/cia/texturepacker/
 ├── PixelEditorActivity.kt   # Pixel editor
 ├── PixelCanvasView.kt       # Custom view canvas
 ├── PackViewModel.kt         # State & logic packing
-├── SpritePacker.kt          # Algoritma packing
+├── SpritePacker.kt          # Algoritma packing + exporter (JSON/XML/plist v2 & v3/TXT)
+├── AtlasImporter.kt         # Import atlas: parser plist v2/v3, JSON, XML, TXT
 ├── BackgroundRemover.kt     # Auto-transparan
 ├── SpriteSplitter.kt        # Auto-pisah sprite
 ├── DataEditorActivity.kt    # Text editor data atlas

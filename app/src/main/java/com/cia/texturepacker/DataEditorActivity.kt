@@ -52,10 +52,11 @@ class DataEditorActivity : AppCompatActivity() {
                 findViewById(R.id.tabJson),
                 findViewById(R.id.tabXml),
                 findViewById(R.id.tabPlist),
+                findViewById(R.id.tabPlist3),
                 findViewById(R.id.tabTxt)
             )
         )
-        val keys = listOf("JSON", "XML", "plist", "TXT")
+        val keys = listOf("JSON", "XML", "plist", "PLIST3", "TXT")
         tabButtons.forEachIndexed { i, b ->
             b.setOnClickListener { switchFormat(keys[i]) }
         }
@@ -79,7 +80,7 @@ class DataEditorActivity : AppCompatActivity() {
     }
 
     private fun refreshTabs() {
-        val keys = listOf("JSON", "XML", "plist", "TXT")
+        val keys = listOf("JSON", "XML", "plist", "PLIST3", "TXT")
         tabButtons.forEachIndexed { i, b ->
             val active = keys[i] == currentFormat
             b.setBackgroundColor(

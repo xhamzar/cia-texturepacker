@@ -23,7 +23,7 @@ object CodeHighlighter {
         val sb = SpannableStringBuilder(code)
         when (format.uppercase()) {
             "JSON" -> highlightJson(sb)
-            "XML", "PLIST" -> highlightXml(sb)
+            "XML", "PLIST", "PLIST3" -> highlightXml(sb)
             else -> highlightTxt(sb)
         }
         return sb

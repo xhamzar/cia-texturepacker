@@ -74,6 +74,15 @@
     <string name="splitting">Memisahkan sprite…</string>
     <string name="split_done">Dipisah jadi %1$d sprite</string>
     <string name="split_none">Tidak ada sprite yang terpisah</string>
+    <string name="import_atlas">Import Atlas</string>
+    <string name="importing_atlas">Mengimpor atlas…</string>
+    <string name="import_done">Diimpor %1$d sprite dari %2$s</string>
+    <string name="import_skipped"> (%1$d dilewati)</string>
+    <string name="import_failed">Gagal impor: %1$s</string>
+    <string name="import_no_frames">Tidak ada frame di file data</string>
+    <string name="import_bad_image">Gambar atlas tidak bisa dibaca</string>
+    <string name="import_bad_data">File data tidak bisa dibaca</string>
+    <string name="import_size_mismatch">Ukuran tidak cocok: file data untuk gambar %1$dx%2$d, tapi gambar ini %3$dx%4$d. Pastikan pasangannya benar (mis. Report.plist dengan Report.png).</string>
     <string name="removing_bg">Menghapus background…</string>
     <string name="bg_removed">Background dihapus</string>
     <string name="select">Pilih</string>
@@ -84,6 +93,11 @@
     <string name="delete_title">Hapus gambar?</string>
     <string name="delete_confirm">Hapus %1$d gambar yang dipilih?</string>
     <string name="cancel">Batal</string>
+    <string name="ok">OK</string>
+    <string name="rename_title">Ganti Nama</string>
+    <string name="action_rename">Ganti Nama</string>
+    <string name="action_edit_pixel">Edit Pixel</string>
+    <string name="renamed">\"%1$s\" tersimpan</string>
     <string name="delete">Hapus</string>
     <string name="deleted_n">%1$d gambar dihapus</string>
     <string name="pixel_editor">Editor Pixel</string>

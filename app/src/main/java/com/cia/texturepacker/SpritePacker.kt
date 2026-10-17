@@ -377,6 +377,46 @@ object SpritePacker {
         return sb.toString()
     }
 
+    /** Cocos2d plist (format 3) — matches current TexturePacker / Cocos Creator
+     *  output (aliases, anchor, spriteOffset, spriteSize, spriteSourceSize,
+     *  textureRect, textureRotated + full metadata block). */
+    fun toPlistV3(result: PackResult, imageName: String): String {
+        val sb = StringBuilder()
+        sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
+        sb.append("<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n")
+        sb.append("<plist version=\"1.0\">\n<dict>\n")
+        sb.append("\t<key>frames</key>\n\t<dict>\n")
+        for (p in result.sprites) {
+            // Same convention as format 2 (verified against cocos2d-x):
+            // when rotated=true the engine swaps w/h itself, so textureRect
+            // carries the UNROTATED trimmed size.
+            val fw = if (p.rotated) p.trimW else p.frame.width
+            val fh = if (p.rotated) p.trimH else p.frame.height
+            val ox = (p.trimX + p.trimW / 2.0) - (p.sourceW / 2.0)
+            val oy = (p.sourceH / 2.0) - (p.trimY + p.trimH / 2.0)
+            sb.append("\t\t<key>${escXml(p.name)}</key>\n")
+            sb.append("\t\t<dict>\n")
+            sb.append("\t\t\t<key>aliases</key>\n\t\t\t<array/>\n")
+            sb.append("\t\t\t<key>anchor</key>\n\t\t\t<string>{0.5,0.5}</string>\n")
+            sb.append("\t\t\t<key>spriteOffset</key>\n\t\t\t<string>{${fmtNum(ox)},${fmtNum(oy)}}</string>\n")
+            sb.append("\t\t\t<key>spriteSize</key>\n\t\t\t<string>{${p.trimW},${p.trimH}}</string>\n")
+            sb.append("\t\t\t<key>spriteSourceSize</key>\n\t\t\t<string>{${p.sourceW},${p.sourceH}}</string>\n")
+            sb.append("\t\t\t<key>textureRect</key>\n\t\t\t<string>{{${p.x},${p.y}},{${fw},${fh}}}</string>\n")
+            sb.append("\t\t\t<key>textureRotated</key>\n\t\t\t${if (p.rotated) "<true/>" else "<false/>"}\n")
+            sb.append("\t\t</dict>\n")
+        }
+        sb.append("\t</dict>\n")
+        sb.append("\t<key>metadata</key>\n\t<dict>\n")
+        sb.append("\t\t<key>format</key>\n\t\t<integer>3</integer>\n")
+        sb.append("\t\t<key>pixelFormat</key>\n\t\t<string>RGBA8888</string>\n")
+        sb.append("\t\t<key>premultiplyAlpha</key>\n\t\t<false/>\n")
+        sb.append("\t\t<key>realTextureFileName</key>\n\t\t<string>${escXml(imageName)}</string>\n")
+        sb.append("\t\t<key>size</key>\n\t\t<string>{${result.width},${result.height}}</string>\n")
+        sb.append("\t\t<key>textureFileName</key>\n\t\t<string>${escXml(imageName)}</string>\n")
+        sb.append("\t</dict>\n</dict>\n</plist>\n")
+        return sb.toString()
+    }
+
     /** Simple text list: one sprite per line as "name x y w h". */
     fun toTxt(result: PackResult, imageName: String): String {
         val sb = StringBuilder()
